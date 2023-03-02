@@ -1,0 +1,20 @@
+<launch>
+    <param name="robot_description" textfile="$(find my_robot)/urdf/mbot_base.urdf"/>
+    
+    <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+    
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model mbot_base -param robot_description"/>
+    <node name="rviz" pkg="rviz" type="rviz" />
+
+    <!-- load the controllers -->
+    <rosparam file="$(find my_robot)/config/controllers.yaml" command="load"/>
+    <node name="controllers_loader" pkg="controller_manager" type="controller_manager" output="screen" respawn="false"
+          args="load
+          controllers/joint_state_controller
+          controllers/effort_joint_controller"/>
+
+</launch>
+
